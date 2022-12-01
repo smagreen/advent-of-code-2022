@@ -24,7 +24,7 @@ def part_2(calories):
 
 calories = build_calorie_list(read_input("./1/input.txt"))
 
-# Part 1 = 696501
+# Part 1 = 69501
 print(part_1(calories))
     
 # Part 2 = 202346
