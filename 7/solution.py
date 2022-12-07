@@ -1,8 +1,7 @@
 def read_instructions(filename):
-    instructions = [line.strip() for line in open(filename).readlines()]
-    return instructions
+    return [line.strip() for line in open(filename).readlines()]
 
-def follow_instructions(instructions):
+def follow_instructions(instructions :list):
     root = './'
     current_dir = root
     directories = [current_dir]
@@ -10,8 +9,7 @@ def follow_instructions(instructions):
 
     for ins in instructions:
         if ins.startswith("$ cd .."):
-            last_slash = current_dir.rindex('/')
-            current_dir = current_dir[0 : last_slash]
+            current_dir = current_dir[0 : current_dir.rindex('/')]
         elif ins == '$ cd /':
             current_dir = root
         elif ins.startswith('$ cd '):
@@ -34,25 +32,24 @@ def follow_instructions(instructions):
 def calc_directory_size(directories, files):
     directories.sort(key=len, reverse=True)
     attribs = {}
-    for d in directories:
-        sizes = [(s[0], s[2]) for s in files if s[0] == d]
-        attribs.update({d: sum(size for _, size in sizes)})
+    for dir in directories:
+        sizes = [(path, size) for path, _, size in files if path == dir]
+        attribs.update({dir: sum(size for _, size in sizes)})
         
     return attribs
 
 def solve(attribs):
     root = './'
-    for key, value in attribs.items():
-        if key == root: break
-        if value > 0 :
-            parent = key[0 : key.rindex('/')]
-            if len(parent) == 1: parent = root
-            attribs[parent] += value
+    for path, size in attribs.items():
+        if path == root: break
+        parent = path[0 : path.rindex('/')]
+        if len(parent) == 1: parent = root
+        attribs[parent] += size
 
-    part_1 = sum([dir[1] for dir in attribs.items() if dir[1] <= 100000 ])
+    part_1 = sum(size for _, size in attribs.items() if size <= 100000 )
     
-    available = 70000000 - max(dir[1] for dir in attribs.items())
-    part_2 = sorted([dir[1] for dir in attribs.items() if dir[1] >= 30000000 - available ])[0]
+    available = 70000000 - max(size for _, size in attribs.items())
+    part_2 = sorted(size for _, size in attribs.items() if size >= 30000000 - available )[0]
     
     return part_1, part_2
  
@@ -60,7 +57,7 @@ def solve(attribs):
 instructions = read_instructions('./7/input.txt')
 directories, files = follow_instructions(instructions)
 attribs = calc_directory_size(directories, files)
-print(solve(attribs) == (1432936,272298))
+print(solve(attribs) == (1432936, 272298))
 
 
     
