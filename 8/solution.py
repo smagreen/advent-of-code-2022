@@ -15,17 +15,16 @@ def find_visible_trees(forest):
         look_left = forest[row][0 : col]
         look_right = forest[row][col+1:]
 
-        look_up = [forest[x][col] for x in range(row, 0, -1)]
+        look_up = [forest[x][col] for x in range(row -1, -1, -1)]
         look_down = [forest[x][col] for x in range(row + 1, forest_size)]
 
-        if tree_height > max(look_left, default=-1): 
-            visible_trees[(row,col)] = tree_height
-        if tree_height > max(look_right, default=-1): 
-            visible_trees[(row,col)] = tree_height
-        if tree_height > max(look_up, default=-1):
-            visible_trees[(row,col)] = tree_height
-        if tree_height > max(look_down, default=-1):
-            visible_trees[(row,col)] = tree_height
+        visible = False
+        if tree_height > max(look_left, default=-1): visible = True
+        if tree_height > max(look_right, default=-1): visible = True
+        if tree_height > max(look_up, default=-1): visible = True
+        if tree_height > max(look_down, default=-1): visible = True
+            
+        if visible: visible_trees[(row,col)] = tree_height
 
     return visible_trees
 
