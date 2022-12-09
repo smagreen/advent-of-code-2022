@@ -1,18 +1,34 @@
-import itertools
+from itertools import product, takewhile
 
 def read_input(filename):
     with open(filename) as f:
         lines = [list(map(int, line.strip())) for line in f.readlines()]
     return lines
 
+
+def calc_view_distance(tree_height, view):
+    distance = len(list(takewhile(lambda x: x < tree_height, view)))
+    return distance if distance == len(view) else distance + 1
+
+
+def calc_scenic_score(tree_height, left, right, up, down):
+    view_left = calc_view_distance(tree_height, left)
+    view_right = calc_view_distance(tree_height, right)
+    view_up = calc_view_distance(tree_height, up)
+    view_down = calc_view_distance(tree_height, down)
+
+    return view_left * view_right * view_up * view_down
+
+
 def find_visible_trees(forest):
     visible_trees = {}
     forest_size = len(forest[0])
+    max_score = -1
 
-    for row, col in itertools.product(range(0, forest_size), repeat=2):
+    for row, col in product(range(0, forest_size), repeat=2):
         tree_height = forest[row][col]
         
-        look_left = forest[row][0 : col]
+        look_left = forest[row][0 : col][::-1]
         look_right = forest[row][col+1:]
 
         look_up = [forest[x][col] for x in range(row -1, -1, -1)]
@@ -26,18 +42,16 @@ def find_visible_trees(forest):
             
         if visible: visible_trees[(row,col)] = tree_height
 
-    return visible_trees
+        scenic_score = calc_scenic_score(tree_height, look_left, look_right, look_up, look_down)
+        max_score = scenic_score if scenic_score > max_score else max_score
 
+    return len(visible_trees), max_score
 
-def part_1(forest):
-    visible = find_visible_trees(forest)
-    return len(visible)
+visible, max_score = find_visible_trees(read_input('./8/test.txt'))
+print(f"Test Part 1= {visible}, Pass={visible==21}")
+print(f"Test Part 2 = {max_score}, Pass={max_score==8}")
 
-test_forest = read_input('./8/test.txt')
-part_1_test = part_1(test_forest)
-print(f"Test = {part_1_test}, Pass={part_1_test==21}")
-
-forest = read_input('./8/input.txt')
-part_1 = part_1(forest)
-print(f"Test = {part_1}, Pass={part_1==1533}")
+visible, max_score = find_visible_trees(read_input('./8/input.txt'))
+print(f"Part 1 = {visible}, Pass={visible==1533}")
+print(f"Part 2 = {max_score}, Pass={max_score==345744}")
 
