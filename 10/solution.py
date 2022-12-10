@@ -14,7 +14,7 @@ def run(instructions):
             x += int(line.split()[1])
             x_values.append(x)
 
-    part_1 = sum([ check * x_values[check] for check in [20,60,100,140,180,220]])
+    part_1 = sum([ check * x_values[check - 1] for check in [20,60,100,140,180,220]])
 
     for pixel in range(0, 240):
         line_pixel = pixel % 40
