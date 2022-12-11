@@ -1,8 +1,7 @@
-import re
 import time
 import logging
 
-logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="w",
+logging.basicConfig(level=logging.DEBUG, filename="log.log", filemode="a",
     format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Create a class to represent a monkey
@@ -20,17 +19,22 @@ class Monkey:
         s = self.operation.split()
         operator = s[-2]
         op_value = s[-1]
-        
+
         throw_items = []
 
         self.items_inspected += len(self.items)
         for item in self.items:
-            operand = int(op_value) if re.search("\d", op_value) else item
-            wl = eval(f"{item} {operator} {operand}")
-            wl = wl = wl // 3 if divide_by_three else wl % max_worry
-            target = wl % self.divisible_by
+
+            if operator == '+':
+                item += int(op_value)
+            elif op_value == 'old':
+                item *= item
+            else: item *= int(op_value)
+            
+            item = item // 3 if divide_by_three else item % max_worry
+            target = item % self.divisible_by
             next_monkey = self.if_true if target == 0 else self.if_false 
-            throw_items.append((next_monkey, wl))
+            throw_items.append((next_monkey, item))
         
         self.items = []
         return throw_items
