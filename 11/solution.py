@@ -48,10 +48,10 @@ def read_input(filename):
     with open(filename) as f:
         lines = [line.strip() for line in f.readlines()]
 
-    monkies = []
+    monkeys = []
     for line in lines:
         if line.startswith('Monkey '):
-            this_monkey = Monkey(len(monkies))
+            this_monkey = Monkey(len(monkeys))
         if line.startswith('Starting items:'):
             this_monkey.items = list(map(int,line[16:].strip().split(', ')))
         if line.startswith('Operation:'):
@@ -62,24 +62,24 @@ def read_input(filename):
             this_monkey.if_true = int(line[25:].strip())
         if line.startswith('If false: throw to monkey '):
             this_monkey.if_false = int(line[25:].strip())
-            monkies.append(this_monkey)
+            monkeys.append(this_monkey)
 
-    return monkies
+    return monkeys
 
-def solve(monkies, num_rounds, divide=True):
+def solve(monkeys, num_rounds, divide=True):
     logging.info(f"Starting solve: {num_rounds}, Part {1 if divide else 2}")
     start = time.perf_counter()
     max_worry = 1
-    for m in monkies:
+    for m in monkeys:
         max_worry *= m.divisible_by
 
     for round in range(num_rounds):
-        for monkey in monkies:
+        for monkey in monkeys:
             thrown = monkey.items_to_throw(divide, max_worry)
             for target, wl in thrown:
-                monkies[target].items.append(wl)
+                monkeys[target].items.append(wl)
 
-    totals = sorted([m.items_inspected for m in monkies], reverse=True)
+    totals = sorted([m.items_inspected for m in monkeys], reverse=True)
     
     end = time.perf_counter()
     logging.info(f"Solve: {num_rounds}, Time: {end - start:0.4f} secs \n\tMonkey Items: {totals}")
@@ -87,16 +87,16 @@ def solve(monkies, num_rounds, divide=True):
     return totals[0] * totals[1]
 
 
-test_monkies = read_input('./11/test.txt')
-part_1_test = solve(test_monkies, 20) 
+test_monkeys = read_input('./11/test.txt')
+part_1_test = solve(test_monkeys, 20) 
 print(f"Test Pass = {part_1_test==10605}")
 
-monkies = read_input('./11/input.txt')
-part_1 = solve(monkies, 20, True) 
+monkeys = read_input('./11/input.txt')
+part_1 = solve(monkeys, 20, True) 
 print(f"Pass = {part_1 == 66124}, {part_1}")
 
-monkies = read_input('./11/input.txt')
-part_2 = solve(monkies, 10000, False) 
+monkeys = read_input('./11/input.txt')
+part_2 = solve(monkeys, 10000, False) 
 print(f"Pass = {part_2 == 19309892877}, {part_2}")
 
 
