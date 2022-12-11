@@ -25,12 +25,9 @@ def run(instructions):
 
 part_1, pixels = run(read_input('./10/input.txt'))
 
-print(part_1)
+print(part_1, end='\n\n')
 
-print(''.join(pixels[0:40]))
-print(''.join(pixels[40:80]))
-print(''.join(pixels[80:120]))
-print(''.join(pixels[120:160]))
-print(''.join(pixels[160:200]))
-print(''.join(pixels[200:240]))
+for line in range(0, 240, 40):
+    print(''.join(pixels[line: line+40]))
+
     
